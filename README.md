@@ -5,7 +5,7 @@ A simple script that takes a Grants.gov URL, extracts the funding opportunity da
 ## What It Does
 
 1. Takes a Grants.gov opportunity URL
-2. Calls the Grants.gov API to fetch the data
+2. Calls the Grants.gov API to get the data
 3. Maps the response to a schema
 4. Applies rule-based tags (simple keyword matching)
 5. Saves two output files: `foa.json` and `foa.csv`
@@ -45,7 +45,7 @@ python main.py --url "https://simpler.grants.gov/opportunity/e1f118fb-8e9d-4c86-
 https://simpler.grants.gov/opportunity/e1f118fb-8e9d-4c86-b0c3-e9e5c5e0b59d
 ```
 
-## How It Works (Simple Version)
+## How It Works 
 
 ```
 URL -> extract opportunity ID -> call API -> map fields to schema -> apply tags -> save JSON + CSV
