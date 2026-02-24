@@ -22,6 +22,12 @@ A simple script that takes a Grants.gov URL, extracts the funding opportunity da
 
 ## Setup
 
+Clone this repository:
+
+```bash
+https://github.com/sritaaa/AI-Powered-Funding-Intelligence.git
+```
+
 Install dependencies:
 
 ```bash
