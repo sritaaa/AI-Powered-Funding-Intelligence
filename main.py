@@ -1,10 +1,9 @@
 import argparse
 import os
 import json
-import csv
 import requests
 import pandas as pd
-from pdfminer.high_level import extract_text
+from bs4 import BeautifulSoup
 
 Keys = {
     "AI":["machine learning","Artificial intelligence"],
@@ -12,6 +11,11 @@ Keys = {
     "Health":["medical","hospital","records","health"]
 }
 api_key="rXd4nfxLkTmFTTWVziytTPt4t"
+
+def fix_description(html_text):
+    soup = BeautifulSoup(html_text, "html.parser")
+    return soup.get_text(separator=" ", strip=True)
+
 
 def extract_id(url):
     return url.rstrip("/").split("/")[-1]
@@ -33,10 +37,10 @@ def map_schema(data,url):
         "id": data.get("opportunity_id"),
         "title": data.get("opportunity_title"),
         "agency": data.get("agency_name"),
-        "posted_data": data.get("post_date"),
-        "close_date":data.get("close_date"),
+        "posted_data": summary.get("post_date"),
+        "close_date":summary.get("close_date"),
         "eligibility": ", ".join(summary.get("applicant_types", []) or []),
-        "description": data.get("summary_description"),
+        "description": fix_description(summary.get("summary_description")),
         "source_url":url,
         "pdf_url":pdf_url
 
@@ -63,37 +67,7 @@ def save_outputs(foa, out_dir):
     pdf_path=os.path.abspath(os.path.join(out_dir,"foa.pdf"))
     with open(json_path,"w") as f:
         json.dump(foa,f,indent=2)
-    ############################################################pdf#################
-    if(pdf_url):
-        response=requests.get(pdf_url)
-        if response.status_code==200:
-            with open(pdf_path,"wb") as f:
-                f.write(response.content)
-    else:
-        print("No pdf found")
-    
-    ########################## pdf#####################################
-    if os.path.exists(pdf_path):
-        pdf_text=extract_text(pdf_path)
-        lines=[l.strip()  for l in pdf_text.split("\n") if l.strip()]
-        pdf_data={
-            "agency":None,
-            "title":None,
-            "deadline":None,
-        }
-        for line in lines:
-            low=line.lower()
-            if( not pdf_data["agency"] and "agency" in low):
-                pdf_data["agency"]=line
-            if( not pdf_data["title"] and "title" in low):
-                pdf_data["title"]=line
-            if( not pdf_data["deadline"] and "deadline" in low):
-                pdf_data["deadline"]=line
-        pdf_json_path = os.path.abspath(os.path.join(out_dir, "pdf.json"))
-        with open(pdf_json_path, "w") as f:
-            json.dump(pdf_data, f, indent=2)
-        print("Saved PDF JSON",pdf_json_path)
-   ######################################################################## 
+
     pd.DataFrame([foa]).to_csv(csv_path,index=False)
     
     print("Saved JSON", json_path)
@@ -111,7 +85,7 @@ def main():
     foa = map_schema(data, args.url)
 
     tag_text = (foa["title"] or "") + " " + (foa["description"] or "")
-    foa["tags"] = give_tag(tag_text)
+    foa["tags"] = give_tag(tag_text)###add extra tag column
 
     save_outputs(foa, args.out_dir)
 
@@ -119,3 +93,4 @@ def main():
     
 if __name__ == "__main__":
     main()
+
