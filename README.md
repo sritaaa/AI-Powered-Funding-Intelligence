@@ -1,13 +1,12 @@
 # AI-Powered Funding Intelligence
 
-A simple script that takes a Grants.gov URL, gets the funding opportunity data, and saves it as both **JSON** and **CSV**.
+A simple script that takes a Grants.gov URL, extracts the funding opportunity data, and saves it in a structured format both **JSON** and **CSV**.
 
----
 ## What It Does
 
 1. Takes a Grants.gov opportunity URL
 2. Calls the Grants.gov API to fetch the data
-3. Maps the response to a clean schema
+3. Maps the response to a schema
 4. Applies rule-based tags (simple keyword matching)
 5. Saves two output files: `foa.json` and `foa.csv`
 
@@ -18,6 +17,7 @@ A simple script that takes a Grants.gov URL, gets the funding opportunity data, 
 | `requirements.txt` 
 | `out/foa.json` 
 | `out/foa.csv` 
+|  `README.md`
 
 
 ## Setup
